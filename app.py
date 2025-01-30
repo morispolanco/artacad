@@ -14,7 +14,7 @@ def generate_content(prompt):
     }
     data = {
         "model": "klusterai/Meta-Llama-3.1-405B-Instruct-Turbo",
-        "max_completion_tokens": 5000,
+        "max_completion_tokens": 7500,
         "temperature": 1,
         "top_p": 1,
         "messages": [
