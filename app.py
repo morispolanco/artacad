@@ -66,11 +66,12 @@ if area:
             st.subheader("Tesis Generada")
             st.write(tesis)
 
-            # Generar artículo académico con secciones largas
+            # Generar artículo académico con secciones de 5 a 7 párrafos
             articulo_prompt = (
                 f"Escribe un artículo académico que desarrolle la siguiente tesis: {tesis}. "
-                "El artículo debe estar dividido en secciones largas que profundicen en diferentes aspectos de la tesis. "
-                "Cada sección debe tener un título descriptivo y un contenido detallado."
+                "El artículo debe estar dividido en secciones largas, cada una con un título descriptivo. "
+                "Cada sección debe tener entre 5 y 7 párrafos bien desarrollados. "
+                "Asegúrate de que el contenido sea coherente y profundice en los aspectos clave de la tesis."
             )
             articulo = generate_content(articulo_prompt)
             if articulo:
