@@ -89,3 +89,13 @@ if area:
                             file_name="tesis_y_articulo.pdf",
                             mime="application/pdf"
                         )
+
+# Footer
+st.markdown(
+    """
+    <div style="text-align: center; margin-top: 50px;">
+        <p>Copyright 2025 <a href="https://hablemosbien.org" target="_blank">Hablemosbien.org</a></p>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
