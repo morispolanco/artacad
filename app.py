@@ -1,10 +1,9 @@
 import streamlit as st
 import requests
-import os
 
 # Configuración de la API
 API_URL = "https://api.kluster.ai/v1/chat/completions"
-API_KEY = st.secrets["API_KEY"]
+API_KEY = st.secrets.get("API_KEY", os.getenv("API_KEY"))
 
 # Función para generar contenido usando la API de Kluster.ai
 def generate_content(prompt):
@@ -21,42 +20,46 @@ def generate_content(prompt):
             {"role": "user", "content": prompt}
         ]
     }
-    response = requests.post(API_URL, headers=headers, json=data)
-    if response.status_code == 200:
+    try:
+        response = requests.post(API_URL, headers=headers, json=data)
+        response.raise_for_status()
         return response.json()["choices"][0]["message"]["content"]
-    else:
-        return f"Error: {response.status_code}, {response.text}"
+    except requests.exceptions.HTTPError as http_err:
+        return f"HTTP error occurred: {http_err}"
+    except Exception as err:
+        return f"An error occurred: {err}"
 
 # Interfaz de Streamlit
 st.title("Generador de Tesis y Artículos Académicos")
+st.warning("El contenido generado por esta herramienta debe ser revisado y validado antes de su uso en trabajos académicos.")
 
-# Entrada del usuario
 area = st.text_input("Ingresa el área científica o filosófica de tu interés:")
+if st.button("Generar Contenido"):
+    if area:
+        with st.spinner("Generando tesis..."):
+            tesis_prompt = f"Genera una tesis original en el área de {area}."
+            tesis = generate_content(tesis_prompt)
+        st.subheader("Tesis Generada")
+        st.write(tesis)
 
-if area:
-    # Generar tesis
-    tesis_prompt = f"Genera una tesis original en el área de {area}."
-    tesis = generate_content(tesis_prompt)
-    st.subheader("Tesis Generada")
-    st.write(tesis)
+        with st.spinner("Generando plan de desarrollo..."):
+            plan_prompt = f"Genera un plan para desarrollar la siguiente tesis: {tesis}"
+            plan = generate_content(plan_prompt)
+        st.subheader("Plan de Desarrollo")
+        st.write(plan)
 
-    # Generar plan de desarrollo
-    plan_prompt = f"Genera un plan para desarrollar la siguiente tesis: {tesis}"
-    plan = generate_content(plan_prompt)
-    st.subheader("Plan de Desarrollo")
-    st.write(plan)
+        with st.spinner("Generando apartados del artículo..."):
+            apartados_prompt = f"Genera los apartados que contendrá un artículo académico que desarrolle la siguiente tesis: {tesis}"
+            apartados = generate_content(apartados_prompt)
+        st.subheader("Apartados del Artículo Académico")
+        st.write(apartados)
 
-    # Generar apartados del artículo académico
-    apartados_prompt = f"Genera los apartados que contendrá un artículo académico que desarrolle la siguiente tesis: {tesis}"
-    apartados = generate_content(apartados_prompt)
-    st.subheader("Apartados del Artículo Académico")
-    st.write(apartados)
-
-    # Escribir cada apartado
-    st.subheader("Desarrollo de los Apartados")
-    apartados_list = apartados.split("\n")
-    for apartado in apartados_list:
-        if apartado.strip():
+        st.subheader("Desarrollo de los Apartados")
+        apartados_list = [apartado.strip() for apartado in apartados.split("\n") if apartado.strip()]
+        for apartado in apartados_list:
             st.write(f"**{apartado}**")
-            contenido_apartado = generate_content(f"Escribe el contenido del apartado: {apartado} para la tesis: {tesis}")
+            with st.spinner(f"Escribiendo contenido para: {apartado}"):
+                contenido_apartado = generate_content(f"Escribe el contenido del apartado: {apartado} para la tesis: {tesis}")
             st.write(contenido_apartado)
+    else:
+        st.error("Por favor, ingresa un área de interés.")
