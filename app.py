@@ -30,7 +30,7 @@ def generate_content(prompt):
         return None
 
 # Función para crear un PDF
-def create_pdf(tesis, plan):
+def create_pdf(tesis, articulo):
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Arial", size=12)
@@ -39,18 +39,18 @@ def create_pdf(tesis, plan):
     pdf.cell(200, 10, txt="Tesis Generada", ln=True, align="C")
     pdf.multi_cell(0, 10, txt=tesis)
 
-    # Agregar el plan de desarrollo al PDF
+    # Agregar el artículo académico al PDF
     pdf.add_page()
-    pdf.cell(200, 10, txt="Plan de Desarrollo", ln=True, align="C")
-    pdf.multi_cell(0, 10, txt=plan)
+    pdf.cell(200, 10, txt="Artículo Académico", ln=True, align="C")
+    pdf.multi_cell(0, 10, txt=articulo)
 
     # Guardar el PDF en un archivo temporal
-    pdf_output = "tesis_y_plan.pdf"
+    pdf_output = "tesis_y_articulo.pdf"
     pdf.output(pdf_output)
     return pdf_output
 
 # Interfaz de Streamlit
-st.title("Generador de Tesis y Plan de Desarrollo")
+st.title("Generador de Tesis y Artículo Académico")
 
 # Entrada del usuario
 area = st.text_input("Ingresa el área científica o filosófica de tu interés:")
@@ -66,21 +66,21 @@ if area:
             st.subheader("Tesis Generada")
             st.write(tesis)
 
-            # Generar plan de desarrollo
-            plan_prompt = f"Genera un plan para desarrollar la siguiente tesis: {tesis}"
-            plan = generate_content(plan_prompt)
-            if plan:
-                st.subheader("Plan de Desarrollo")
-                st.write(plan)
+            # Generar artículo académico
+            articulo_prompt = f"Escribe un artículo académico que desarrolle la siguiente tesis: {tesis}. Incluye introducción, metodología, resultados, discusión y conclusiones."
+            articulo = generate_content(articulo_prompt)
+            if articulo:
+                st.subheader("Artículo Académico")
+                st.write(articulo)
 
                 # Crear y descargar PDF
                 st.subheader("Descargar en PDF")
                 if st.button("Generar PDF"):
-                    pdf_file = create_pdf(tesis, plan)
+                    pdf_file = create_pdf(tesis, articulo)
                     with open(pdf_file, "rb") as file:
                         st.download_button(
                             label="Descargar PDF",
                             data=file,
-                            file_name="tesis_y_plan.pdf",
+                            file_name="tesis_y_articulo.pdf",
                             mime="application/pdf"
                         )
