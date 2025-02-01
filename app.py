@@ -1,9 +1,10 @@
 import streamlit as st
 import requests
+import os
 
 # Configuración de la API
 API_URL = "https://api.kluster.ai/v1/chat/completions"
-API_KEY = st.secrets.get("API_KEY", os.getenv("API_KEY"))
+API_KEY = st.secrets["API_KEY"] if "API_KEY" in st.secrets else os.getenv("API_KEY")
 
 # Función para generar contenido usando la API de Kluster.ai
 def generate_content(prompt):
@@ -61,5 +62,3 @@ if st.button("Generar Contenido"):
             with st.spinner(f"Escribiendo contenido para: {apartado}"):
                 contenido_apartado = generate_content(f"Escribe el contenido del apartado: {apartado} para la tesis: {tesis}")
             st.write(contenido_apartado)
-    else:
-        st.error("Por favor, ingresa un área de interés.")
